@@ -2,34 +2,26 @@ name: Weather Update
 
 on:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
-
-permissions:
-  contents: write  # ✅ Needed for pushing changes
 
 jobs:
   update-weather:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v3
-
-      - name: Install jq
-        run: sudo apt-get install jq
-
-      - name: Fetch weather and write to file
+      - name: Get Weather Data
         run: |
-          curl "https://api.openweathermap.org/data/2.5/weather?q=Lahore&appid=${{ secrets.WEATHER_API_KEY }}&units=metric" > weather.json
-          CITY=$(jq -r '.name' weather.json)
-          WEATHER=$(jq -r '.weather[0].description' weather.json)
-          TEMP=$(jq -r '.main.temp' weather.json)
-          echo "📍 Weather in $CITY: $WEATHER | 🌡 Temp: $TEMP°C" > WEATHER.md
+          CITY="Lahore"
+          API_KEY=${{ secrets.WEATHER_API_KEY }}
+          RESPONSE=$(curl -s "https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric")
+          WEATHER=$(echo $RESPONSE | jq -r '.weather[0].main')
+          TEMP=$(echo $RESPONSE | jq -r '.main.temp')
+          echo "📍 Weather in ${CITY}: ${WEATHER} | 🌡 Temp: ${TEMP}°C" > WEATHER.md
 
-      - name: Commit & push changes
+      - name: Commit & Push
         run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
           git add WEATHER.md
-          git diff --cached --quiet || git commit -m "Update weather"
+          git commit -m "Update weather"
           git push
