@@ -1,1 +1,1 @@
-📍 Weather in null: null | 🌡 Temp: null°C
+📍 Weather in Lahore: null | 🌡 Temp: null°C
