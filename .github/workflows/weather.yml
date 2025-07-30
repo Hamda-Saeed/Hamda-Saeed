@@ -5,23 +5,35 @@ on:
     - cron: '0 */6 * * *'  # Every 6 hours
   workflow_dispatch:
 
+permissions:
+  contents: write  # 🔐 Required for git push
+
 jobs:
   update-weather:
     runs-on: ubuntu-latest
+
     steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get install jq
+
       - name: Get Weather Data
         run: |
           CITY="Lahore"
-          API_KEY=${{ secrets.WEATHER_API_KEY }}
+          API_KEY="${{ secrets.WEATHER_API_KEY }}"
           RESPONSE=$(curl -s "https://api.openweathermap.org/data/2.5/weather?q=${CITY}&appid=${API_KEY}&units=metric")
-          WEATHER=$(echo $RESPONSE | jq -r '.weather[0].main')
-          TEMP=$(echo $RESPONSE | jq -r '.main.temp')
+          WEATHER=$(echo "$RESPONSE" | jq -r '.weather[0].main')
+          TEMP=$(echo "$RESPONSE" | jq -r '.main.temp')
           echo "📍 Weather in ${CITY}: ${WEATHER} | 🌡 Temp: ${TEMP}°C" > WEATHER.md
 
       - name: Commit & Push
         run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add WEATHER.md
-          git commit -m "Update weather"
+          git commit -m "Update weather" || echo "No changes to commit"
           git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
