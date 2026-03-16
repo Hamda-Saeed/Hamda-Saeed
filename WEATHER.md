@@ -1,1 +1,1 @@
-📍 Weather in Lahore: Clear | 🌡 Temp: 13.12°C
+📍 Weather in Lahore: Thunderstorm | 🌡 Temp: 14.99°C
