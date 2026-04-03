@@ -1,1 +1,1 @@
-📍 Weather in Lahore: Clouds | 🌡 Temp: 21.99°C
+📍 Weather in Lahore: Smoke | 🌡 Temp: 17.99°C
