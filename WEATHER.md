@@ -1,1 +1,1 @@
-📍 Weather in Lahore: Clouds | 🌡 Temp: 35.03°C
+📍 Weather in Lahore: Clouds | 🌡 Temp: 26.1°C
